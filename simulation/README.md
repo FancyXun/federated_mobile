@@ -12,7 +12,7 @@ before trying out the examples.
 
 ### <a name="to-build-the-examples"></a> To build the examples
 
-1. From grpc-java/simulation directory:
+1. From federated_mobile/simulation directory:
 ```
 $ ./gradlew installDist
 ```
