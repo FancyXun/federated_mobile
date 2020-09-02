@@ -22,6 +22,8 @@ import io.grpc.stub.StreamObserver;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
+import org.tensorflow.*;
+import com.google.protobuf.ByteString;
 
 /**
  * Server that manages startup/shutdown of a {@code Greeter} server.
@@ -83,9 +85,25 @@ public class ComputationServer {
     @Override
     public void call(ComputationRequest req, StreamObserver<ComputationReply> responseObserver) {
       String clientId = req.getId();
-      ComputationReply reply = ComputationReply.newBuilder().setMessage("Received request from " + clientId).build();
+      Graph graph = new Graph();
+      Graph graph_import = new Graph();
+      Operation x = graph.opBuilder("Const", "x")
+              .setAttr("dtype", DataType.FLOAT)
+              .setAttr("value", Tensor.create(3.0f))
+              .build();
+      Operation y = graph.opBuilder("Placeholder", "y")
+              .setAttr("dtype", DataType.FLOAT)
+              .build();
+      graph.opBuilder("Mul", "xy")
+              .addInput(x.output(0))
+              .addInput(y.output(0))
+              .build();
+      byte[] byteGraph = graph.toGraphDef();
+      ComputationReply.Builder reply = ComputationReply.newBuilder();
+      reply.setMessage("Received request from " + clientId);
+      reply.setGraph(ByteString.copyFrom(byteGraph));
       logger.info("Server received request from " + clientId);
-      responseObserver.onNext(reply);
+      responseObserver.onNext(reply.build());
       responseObserver.onCompleted();
     }
   }

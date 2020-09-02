@@ -38,6 +38,7 @@ import java.io.StringWriter;
 import java.lang.ref.WeakReference;
 import java.util.concurrent.TimeUnit;
 import java.util.UUID;
+import org.tensorflow.*;
 
 public class ComputationActivity extends AppCompatActivity {
     private Button sendButton;
@@ -80,7 +81,11 @@ public class ComputationActivity extends AppCompatActivity {
                 ComputationGrpc.ComputationBlockingStub stub = ComputationGrpc.newBlockingStub(channel);
                 ComputationRequest request = ComputationRequest.newBuilder().setId(local_id).build();
                 ComputationReply reply = stub.call(request);
-                return reply.getMessage();
+                Graph graph = new Graph();
+                graph.importGraphDef(reply.getGraph().toByteArray());
+                Session session = new Session(graph);
+                Tensor tensor = session.runner().fetch("xy").feed("x", Tensor.create(5.0f)).feed("y", Tensor.create(2.0f)).run().get(0);
+                return reply.getMessage() + "_" + String.valueOf(tensor.floatValue());
             } catch (Exception e) {
                 StringWriter sw = new StringWriter();
                 PrintWriter pw = new PrintWriter(sw);

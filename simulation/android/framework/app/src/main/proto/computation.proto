@@ -34,4 +34,6 @@ message ComputationRequest {
 // The response message containing the greetings
 message ComputationReply {
   string message = 1;
+  bytes graph = 2;
 }
+

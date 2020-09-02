@@ -35,16 +35,6 @@ message ComputationRequest {
 // The response message containing the greetings
 message ComputationReply {
   string message = 1;
+  bytes graph = 2;
 }
 
-message TensorFlow {
-
-  // A serialized representation of a TensorFlow graph to execute.
-  //
-  // Stores a tensorflow.GraphDef message.
-  // NOTE: This representation may evolve, e.g., get replaced with a MetaGraph,
-  // SavedModel, or a similar structure. Dependencies on the exact form of the
-  // graph encoding used here should be kept to minimum, and proxied by wrapper
-  // libraries for composing computations in python/core/impl/.
-  google.protobuf.Any graph_def = 1;
-}

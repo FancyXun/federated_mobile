@@ -24,6 +24,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.UUID;
+import org.tensorflow.*;
 
 /**
  * A simple client that requests a computation from the {@link ComputationServer}.
@@ -52,6 +53,11 @@ public class ComputationClient {
       return;
     }
     logger.info("calling: " + response.getMessage());
+    Graph graph = new Graph();
+    graph.importGraphDef(response.getGraph().toByteArray());
+    Session session = new Session(graph);
+    Tensor tensor = session.runner().fetch("xy").feed("x", Tensor.create(5.0f)).feed("y", Tensor.create(2.0f)).run().get(0);
+    System.out.println(tensor.floatValue());
   }
 
   public static void main(String[] args) throws Exception {
