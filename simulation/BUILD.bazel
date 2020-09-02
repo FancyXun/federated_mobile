@@ -19,7 +19,7 @@ java_grpc_library(
 
 
 java_library(
-    name = "examples",
+    name = "learning",
     testonly = 1,
     srcs = glob(
         ["src/main/java/**/*.java"],

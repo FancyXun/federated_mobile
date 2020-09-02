@@ -78,8 +78,24 @@ task helloWorldClient(type: CreateStartScripts) {
     classpath = startScripts.classpath
 }
 
+task computationServer(type: CreateStartScripts) {
+    mainClassName = 'io.grpc.learning.computation.ComputationServer'
+    applicationName = 'computation-server'
+    outputDir = new File(project.buildDir, 'tmp')
+    classpath = startScripts.classpath
+}
+
+task computationClient(type: CreateStartScripts) {
+    mainClassName = 'io.grpc.learning.computation.ComputationClient'
+    applicationName = 'computation-client'
+    outputDir = new File(project.buildDir, 'tmp')
+    classpath = startScripts.classpath
+}
+
 applicationDistribution.into('bin') {
     from(helloWorldServer)
     from(helloWorldClient)
+    from(computationServer)
+    from(computationClient)
     fileMode = 0755
 }
